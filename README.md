@@ -8,8 +8,8 @@ $$\text{EF1} : \exists g \qquad\qquad \text{EFX} : \forall g$$
 
 [![ICLR](https://img.shields.io/badge/ICLR-2027-8B5CF6.svg?style=flat-square)](https://iclr.cc/)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg?style=flat-square)](https://www.python.org/)
-[![Exact](https://img.shields.io/badge/arithmetic-exact%20rational-success.svg?style=flat-square)](#part-3--verification-where-we-tried-to-break-it)
-[![Seeded](https://img.shields.io/badge/seeds-fixed-orange.svg?style=flat-square)](#appendix--every-number-in-one-place)
+[![Exact](https://img.shields.io/badge/arithmetic-exact%20rational-success.svg?style=flat-square)](#part-3-verification-where-we-tried-to-break-it)
+[![Seeded](https://img.shields.io/badge/seeds-fixed-orange.svg?style=flat-square)](#appendix-every-number-in-one-place)
 
 > Anonymized code for an **ICLR 2027** submission under double-blind review.
 > No author, institution, or identifying metadata appears anywhere in this repository.
@@ -19,7 +19,7 @@ $$\text{EF1} : \exists g \qquad\qquad \text{EFX} : \forall g$$
 ## The story
 
 Two agents. One of them already holds two items that nobody can take away: $g^{*}$, worth
-almost everything, and $g^{\circ}$, worth $\eta = 2^{-10}$ — a rounding error with a name.
+almost everything, and $g^{\circ}$, worth $\eta = 2^{-10}$, a rounding error with a name.
 A pool of $m$ spare goods sits between them. You may hand out $m/2$ of them to repair the envy.
 
 You cannot see the valuations. You can only sample them, noisily, one observation at a time.
@@ -30,7 +30,7 @@ Now pick your fairness notion.
 $g^{*}$. What is left is worth $\eta$. Any single pool item beats that.
 **Hand over item number one and stop. You never looked at the data.**
 
-**Pick EFX.** You must survive discarding *any* item — including $g^{\circ}$, the worthless
+**Pick EFX.** You must survive discarding *any* item, including $g^{\circ}$, the worthless
 one. What is left is worth $3/8 - \eta$. Now you have to build a bundle nearly that
 valuable, and the only bundles that qualify are the ones matching a hidden set $S_\theta$
 you cannot see. **You are going to be here a while.**
@@ -57,14 +57,14 @@ Assouad's lemma turns that counting argument into a theorem. The constants are i
 `verification/verify_thm31.py`, computed in exact rationals so you can check them yourself.
 
 And the upper bound? A single observation of a bundle is a **noisy linear measurement of
-all of $\theta$ at once**. An estimator that exploits this needs $O(m^2)$ — matching.
+all of $\theta$ at once**. An estimator that exploits this needs $O(m^2)$, matching.
 Sharing observations across coordinates is worth a factor of $m$ over the naive scheme.
 
 </details>
 
 ---
 
-## Part 1 — Reproduce the headline in one command
+## Part 1: Reproduce the headline in one command
 
 ```bash
 pip install -r requirements.txt
@@ -83,7 +83,7 @@ python experiments/run_fig1.py
 | estimator | conditional-mean over random half-sets |
 | seed | `default_rng(0)` for EEAG, `default_rng(1)` for standard |
 
-**What you should see** — one algorithm, one allocation, three verdicts:
+**What you should see.** One algorithm, one allocation, three verdicts:
 
 ```
 --- frozen, m=32, eps=0.0078125, seeds=300 ---
@@ -95,18 +95,18 @@ T~9.6e4    EF1=1.000  EFX~0.95   EF~0.95
 
 EF1 is satisfied at $T = 0$ and never wavers. EFX crosses half around $5.9 \times 10^4$ and
 $95\%$ around $9.6 \times 10^4$. At $m = 32$ that puts the measured constant in front of
-$m^2$ at **58 and 93**.
+$m^2$ at **58 and 94**.
 
 > **The experiment is rigged against us, deliberately.**
 > The algorithm is told $T$ but **not** which notion will judge it. It produces one
 > allocation; that allocation is then checked against all three. No notion gets a bespoke
 > method, so no difference can come from the algorithm. And success is scored under the
-> **true** valuations — an algorithm that believes it succeeded still fails if the truth
+> **true** valuations: an algorithm that believes it succeeded still fails if the truth
 > disagrees.
 
 ---
 
-## Part 2 — The whole picture
+## Part 2: The whole picture
 
 ### The phase plane
 
@@ -124,7 +124,7 @@ python experiments/run_fig3.py      # slow: bisection over a 6x9 grid
 
 Cost climbs steeply in $m$, gently in $1/\varepsilon$, then **falls off a cliff** at
 $\varepsilon^{\star} = 3/32 - \eta \approx 0.0928$. That line is drawn from theory, not
-fitted to the data — and the collapse begins right above it.
+fitted to the data, and the collapse begins right above it.
 
 ### What the epoch rule buys
 
@@ -198,7 +198,7 @@ observations, so the test is the exact McNemar test with Holm correction.
 
 ---
 
-## Part 3 — Verification, where we tried to break it
+## Part 3: Verification, where we tried to break it
 
 Theory papers hide arithmetic slips in plain sight. We went looking for ours.
 
@@ -213,7 +213,7 @@ No floats. No rounding. No "approximately". Everything is `fractions.Fraction`.
 | check | scope | result |
 |---|---|---|
 | monotonicity, submodularity | all subsets, $m \leq 8$, every $\theta$ | passed |
-| recovery inequality | $27{,}152$ pairs $(\theta, \rho)$ at $m = 8$ | max $d_H = 0$ |
+| recovery inequality | $27{,}152$ pairs $(\theta, \rho)$ at $m = 8$, $\varepsilon = 1/128$ | max $d_H = 0$ |
 | mean-shift bound | $65{,}536$ exact comparisons at $m = 8$ | equals $3/(8m)$ exactly |
 | Assouad chain | symbolic | gap $= 1/192 > 0$ |
 
@@ -221,8 +221,8 @@ That last row is the entire lower bound compressed into one number:
 
 $$\underbrace{\frac{7}{32}}_{\text{Assouad gives}} - \underbrace{\frac{41}{192}}_{\text{success allows}} = \frac{1}{192} > 0$$
 
-Positive. The argument closes. Change $\eta$ or $\varepsilon$ enough and it stops closing —
-that is why the theorem says $\varepsilon \leq 1/128$.
+Positive. The argument closes. Change $\eta$ or $\varepsilon$ enough and it stops closing,
+which is why the theorem says $\varepsilon \leq 1/128$.
 
 ### The algorithm, against an adversary
 
@@ -231,7 +231,7 @@ python verification/verify_adversary.py
 ```
 
 At **every** consultation, the adversary branches on the estimate taking either endpoint of
-its accuracy interval — all $2^k$ patterns of $k$ consultations. Over **770,576 complete
+its accuracy interval, so every endpoint-choice sequence along every execution path is explored. Over **770,576 complete
 adversarial paths** on random coverage, random monotone, and anchor instances with
 $m \leq 6$: every leaf was a two-sided $\varepsilon$-EFX partition under the true valuation,
 within the stated consultation and epoch bounds.
@@ -241,8 +241,8 @@ within the stated consultation and epoch bounds.
 
 <br>
 
-A checker that recomputes the scan order after each move — rather than iterating over the
-order fixed at the start of the pass — **reports failures**.
+A checker that recomputes the scan order after each move, rather than iterating over the
+order fixed at the start of the pass, **reports failures**.
 
 We did not know that mattered. The adversary found it before a reviewer could. That is why
 the theorem now states the snapshot requirement explicitly.
@@ -301,23 +301,23 @@ python experiments/stats_fig1.py
 python figures/make_all_figures.py                    # writes *.pdf, *.png
 
 python verification/verify_thm31.py                   # slow, exact arithmetic
-python verification/verify_adversary.py               # slow, 2^k branching
+python verification/verify_adversary.py               # slow, exhaustive branching
 ```
 
 Expect the phase plane and the two verification scripts to take a while. The exact-rational
-arithmetic at $m = 8$ is slow **on purpose** — floats would defeat the point.
+arithmetic at $m = 8$ is slow **on purpose**: floats would defeat the point.
 
 ---
 
-## Appendix — every number in one place
+## Appendix: every number in one place
 
 | experiment | $m$ | $\varepsilon$ | instances | $\sigma$ | seed | noise |
 |---|---|---|---|---|---|---|
-| `run_fig1` | 32 | 1/128 | 300 | — | 0 / 1 | Bernoulli |
-| `run_fig2` | 8–256 | 0.1 | 40 | — | 7 | — |
-| `run_fig3` | 8–48 | 0.002–0.150 | 60 | — | 0 | Bernoulli |
+| `run_fig1` | 32 | 1/128 | 300 | n/a | 0 / 1 | Bernoulli |
+| `run_fig2` | 8–256 | 0.1 | 40 | n/a | 7 | n/a |
+| `run_fig3` | 8–48 | 0.002–0.150 | 60 | n/a | 0 | Bernoulli |
 | `run_fig4` | 24 | 0.10 | 300 | 0.25 | $7919i + 131j + s$ | 6 models |
-| `run_n3` | 6 | 0.1 | 150 / 100 | — | 0 | uniform |
+| `run_n3` | 6 | 0.1 | 150 / 100 | n/a | 0 | uniform |
 | `run_ablation` | 20 | 0.1 | 150 | 0.25 | `100+s` / `200+s` | uniform |
 | `realdata` | 9 / 240 | 0.1 | 300 / 200 | 0.25 | 0 | uniform |
 
