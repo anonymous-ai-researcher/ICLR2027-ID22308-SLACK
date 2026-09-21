@@ -7,12 +7,98 @@ $$\text{EF1} : \exists g \qquad\qquad \text{EFX} : \forall g$$
 **One quantifier. A quadratic gap.**
 
 [![ICLR](https://img.shields.io/badge/ICLR-2027-8B5CF6.svg?style=flat-square)](https://iclr.cc/)
+[![Anonymous](https://img.shields.io/badge/review-double--blind-lightgrey.svg?style=flat-square)](#)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg?style=flat-square)](https://www.python.org/)
 [![Exact](https://img.shields.io/badge/arithmetic-exact%20rational-success.svg?style=flat-square)](#part-3-verification-where-we-tried-to-break-it)
 [![Seeded](https://img.shields.io/badge/seeds-fixed-orange.svg?style=flat-square)](#appendix-every-number-in-one-place)
 
 > Anonymized code for an **ICLR 2027** submission under double-blind review.
 > No author, institution, or identifying metadata appears anywhere in this repository.
+
+---
+
+## Welcome
+
+> *Every fairness guarantee in the textbook quietly assumes that somebody knows exactly what
+> everybody wants. In practice, nobody ever does.*
+
+Picture a university after the first round of course registration. Students already hold
+seats they will not give up. A handful of seats has just been freed. The registrar wants to
+hand them out so that no student is left envying a classmate, and the only window into what
+students want is noisy: survey answers, ranked lists, a few clicks. Every question costs
+time, and every answer is slightly wrong.
+
+That is the world this paper lives in. **Fairness has to be certified from estimates, not
+from the truth.**
+
+Two fairness notions dominate the field, and they differ by a single word:
+
+| | EF1 | EFX |
+|---|---|---|
+| envy must vanish after removing | **some** item | **every** item |
+
+Where these two notions have been told apart before, the difference came from **existence**
+(an EFX allocation can fail to exist) or from **computation** (exact EFX can take
+exponentially many queries). We found a gap that comes from neither. On our instances a
+perfectly envy-free allocation always exists, it is easy to describe, and the gap is
+**purely informational**:
+
+| on our hard family | EF1 | EFX |
+|---|---|---|
+| an exactly envy-free allocation exists | yes | yes |
+| noisy observations needed to certify it | **0** | **$\Theta(m^2)$** |
+
+Zero versus quadratic. Same instances, same agents, same budget. Nothing differs but the
+quantifier.
+
+### The whole paper in one picture
+
+```
+               held by agent a1, cannot be split       pool of spare goods
+             ┌───────────────────────────────┐     ┌──────────────────────────┐
+             │  g*   worth almost everything │     │  r1  r2  r3  ...  rm     │
+             │  g°   worth 2^-10             │     │  hand out at most m/2    │
+             └───────────────────────────────┘     └──────────────────────────┘
+                              │                                 │
+          EF1 may drop g*:  almost nothing is left    EFX must drop g°:  3/8 - η is left
+          one pool item already beats it              only the hidden set S_θ can match it
+                              │                                 │
+                      0 observations                   Θ(m²) observations
+```
+
+*EF1 may discard the one item that matters. EFX must survive discarding the one that does
+not.* The rest of this README turns that sentence into numbers you can rerun.
+
+### What this repository lets you check
+
+- **A quadratic barrier, and it is tight.** $\varepsilon$-EFX and $\varepsilon$-EF need
+  $\Omega(m^2)$ noisy observations for every $\varepsilon \leq 1/128$, and an $O(m^2)$
+  algorithm matches this on the same family.
+- **The barrier needs both ingredients.** Let the algorithm split the two fixed items and
+  EFX becomes free. Remove the fixed allocation and two agents reach $\varepsilon$-EFX from
+  $\widetilde{O}(m/\varepsilon^3)$ observations under arbitrary monotone valuations.
+- **A transfer principle.** Any deterministic oracle algorithm that tolerates small errors
+  becomes a learning algorithm. For EF1 with $n$ agents this gives
+  $\widetilde{O}(nm/\varepsilon^2)$.
+- **Checked twice, by machine.** The lower-bound chain is re-derived in exact rational
+  arithmetic, and the two-agent algorithm survives 770,576 adversarial estimation paths.
+
+### Why this matters beyond one paper
+
+As allocation moves from hand-entered numbers to learned preferences, choosing a fairness
+notion stops being only a matter of taste. **It sets a price in data.** On our family that
+price jumps from nothing to quadratic on the flip of one quantifier, and the paper pins down
+exactly which structural feature makes it jump: a pair of items that an algorithm is not
+allowed to take apart.
+
+### How to read this in the time you have
+
+| you have | go to |
+|---|---|
+| one minute | you just read it |
+| five minutes | [The story](#the-story), then run `python experiments/run_fig1.py` |
+| twenty minutes | [Part 2](#part-2-the-whole-picture) for the phase plane, the ablations, and real data |
+| an afternoon | [Part 3](#part-3-verification-where-we-tried-to-break-it): try to break the proof yourself |
 
 ---
 
