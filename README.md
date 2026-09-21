@@ -7,7 +7,6 @@ $$\text{EF1} : \exists g \qquad\qquad \text{EFX} : \forall g$$
 **One quantifier. A quadratic gap.**
 
 [![ICLR](https://img.shields.io/badge/ICLR-2027-8B5CF6.svg?style=flat-square)](https://iclr.cc/)
-[![Anonymous](https://img.shields.io/badge/review-double--blind-lightgrey.svg?style=flat-square)](#)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg?style=flat-square)](https://www.python.org/)
 [![Exact](https://img.shields.io/badge/arithmetic-exact%20rational-success.svg?style=flat-square)](#part-3-verification-where-we-tried-to-break-it)
 [![Seeded](https://img.shields.io/badge/seeds-fixed-orange.svg?style=flat-square)](#appendix-every-number-in-one-place)
