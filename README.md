@@ -12,7 +12,6 @@ $$\text{EF1} : \exists g \qquad\qquad \text{EFX} : \forall g$$
 [![Seeded](https://img.shields.io/badge/seeds-fixed-orange.svg?style=flat-square)](#appendix-every-number-in-one-place)
 
 > Anonymized code for an **ICLR 2027** submission under double-blind review.
-> No author, institution, or identifying metadata appears anywhere in this repository.
 
 ---
 
