@@ -67,36 +67,6 @@ quantifier.
 *EF1 may discard the one item that matters. EFX must survive discarding the one that does
 not.* The rest of this README turns that sentence into numbers you can rerun.
 
-### What this repository lets you check
-
-- **A quadratic barrier, and it is tight.** $\varepsilon$-EFX and $\varepsilon$-EF need
-  $\Omega(m^2)$ noisy observations for every $\varepsilon \leq 1/128$, and an $O(m^2)$
-  algorithm matches this on the same family.
-- **The barrier needs both ingredients.** Let the algorithm split the two fixed items and
-  EFX becomes free. Remove the fixed allocation and two agents reach $\varepsilon$-EFX from
-  $\widetilde{O}(m/\varepsilon^3)$ observations under arbitrary monotone valuations.
-- **A transfer principle.** Any deterministic oracle algorithm that tolerates small errors
-  becomes a learning algorithm. For EF1 with $n$ agents this gives
-  $\widetilde{O}(nm/\varepsilon^2)$.
-- **Checked twice, by machine.** The lower-bound chain is re-derived in exact rational
-  arithmetic, and the two-agent algorithm survives 770,576 adversarial estimation paths.
-
-### Why this matters beyond one paper
-
-As allocation moves from hand-entered numbers to learned preferences, choosing a fairness
-notion stops being only a matter of taste. **It sets a price in data.** On our family that
-price jumps from nothing to quadratic on the flip of one quantifier, and the paper pins down
-exactly which structural feature makes it jump: a pair of items that an algorithm is not
-allowed to take apart.
-
-### How to read this in the time you have
-
-| you have | go to |
-|---|---|
-| one minute | you just read it |
-| five minutes | [The story](#the-story), then run `python experiments/run_fig1.py` |
-| twenty minutes | [Part 2](#part-2-the-whole-picture) for the phase plane, the ablations, and real data |
-| an afternoon | [Part 3](#part-3-verification-where-we-tried-to-break-it): try to break the proof yourself |
 
 ---
 
@@ -147,81 +117,6 @@ Sharing observations across coordinates is worth a factor of $m$ over the naive 
 </details>
 
 ---
-
-## Part 1: Reproduce the headline in one command
-
-```bash
-pip install -r requirements.txt
-python experiments/run_fig1.py
-```
-
-**Fixed parameters** (hardcoded, no flags):
-
-| parameter | value |
-|---|---|
-| goods | $m = 32$ |
-| tolerance | $\varepsilon = 1/128 = 0.0078125$ |
-| instances | $300$ |
-| observation model | Bernoulli |
-| budgets $T$ | $0$, then 22 log-spaced points over $[10^{1.0}, 10^{5.4}]$ |
-| estimator | conditional-mean over random half-sets |
-| seed | `default_rng(0)` for EEAG, `default_rng(1)` for standard |
-
-**What you should see.** One algorithm, one allocation, three verdicts:
-
-```
---- frozen, m=32, eps=0.0078125, seeds=300 ---
-T=0        EF1=1.000  EFX=0.000  EF=0.000
-...
-T~5.9e4    EF1=1.000  EFX~0.50   EF~0.50
-T~9.6e4    EF1=1.000  EFX~0.95   EF~0.95
-```
-
-EF1 is satisfied at $T = 0$ and never wavers. EFX crosses half around $5.9 \times 10^4$ and
-$95\%$ around $9.6 \times 10^4$. At $m = 32$ that puts the measured constant in front of
-$m^2$ at **58 and 94**.
-
-> **The experiment is rigged against us, deliberately.**
-> The algorithm is told $T$ but **not** which notion will judge it. It produces one
-> allocation; that allocation is then checked against all three. No notion gets a bespoke
-> method, so no difference can come from the algorithm. And success is scored under the
-> **true** valuations: an algorithm that believes it succeeded still fails if the truth
-> disagrees.
-
----
-
-## Part 2: The whole picture
-
-### The phase plane
-
-```bash
-python experiments/run_fig3.py      # slow: bisection over a 6x9 grid
-```
-
-| parameter | value |
-|---|---|
-| goods | $m \in \{8, 12, 16, 24, 32, 48\}$ |
-| tolerance | $\varepsilon \in \{0.002, 0.008, 0.031, 0.062, 0.078, 0.093, 0.100, 0.120, 0.150\}$ |
-| instances per evaluation | $60$ |
-| threshold | first $T$ with at least $95\%$ success, by bisection to a factor $1.45$ |
-| seed | `default_rng(0)` |
-
-Cost climbs steeply in $m$, gently in $1/\varepsilon$, then **falls off a cliff** at
-$\varepsilon^{\star} = 3/32 - \eta \approx 0.0928$. That line is drawn from theory, not
-fitted to the data, and the collapse begins right above it.
-
-### What the epoch rule buys
-
-```bash
-python experiments/run_fig2.py
-```
-
-$\varepsilon = 0.1$, $m \in \{8, 16, 24, 32, 48, 64, 96, 128, 192, 256\}$, 40 seeds per
-point on random instances, `random.seed(7)`.
-
-On the adversarial anchor: re-examination consults $\Theta(m^2)$ bundles (fitted exponent
-$1.93$, bootstrap interval $[1.91, 1.96]$), the epoch rule consults $\Theta(m)$ (exponent
-$0.95$, interval $[0.92, 0.97]$). Disjoint intervals; each excludes the other's exponent.
 
 ### Outside the hypotheses
 
